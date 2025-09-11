@@ -24,6 +24,7 @@ services:
         condition: service_healthy
     volumes:
       - ./public:/var/www/public
+      - ./.env:/var/www/.env
     env_file:
       - ./.env
     networks:
