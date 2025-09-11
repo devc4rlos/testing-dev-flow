@@ -5,6 +5,7 @@
 .editorconfig
 Dockerfile
 docker-compose.yml
+docker-compose.ci.yml
 README.md
 vendor/
 node_modules/
