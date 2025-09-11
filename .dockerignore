@@ -1,7 +1,6 @@
 .git
 .github
 .env
-.env.example
 .editorconfig
 Dockerfile
 docker-compose.yml

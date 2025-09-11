@@ -4,8 +4,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    env_file:
-      - .env
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql
