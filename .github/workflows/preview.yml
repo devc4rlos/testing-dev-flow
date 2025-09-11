@@ -65,7 +65,7 @@ jobs:
             echo "MYSQL_ROOT_PASSWORD=root_secret_pr_${PR_NUMBER}" >> .env
             echo "DB_DATABASE=laravel_pr_${PR_NUMBER}" >> .env
 
-            docker-compose -f docker-compose.yml -p pr-${PR_NUMBER} up -d
+            docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
 
       - name: Post Preview URL to PR
         uses: marocchino/sticky-pull-request-comment@v2
@@ -92,7 +92,7 @@ jobs:
             PROJECT_DIR="/home/deployer/previews/pr-${PR_NUMBER}"
 
             cd ${PROJECT_DIR}
-            docker-compose -p pr-${PR_NUMBER} down --v
+            docker compose -p pr-${PR_NUMBER} down --v
 
             cd ..
             rm -rf ${PROJECT_DIR}
