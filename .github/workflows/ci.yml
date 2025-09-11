@@ -11,9 +11,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy .env for testing
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-
       - name: Build the Docker image for testing
         run: docker build -t meu-app/laravel:test .
 
