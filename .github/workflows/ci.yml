@@ -20,6 +20,5 @@ jobs:
 
           docker compose -f docker-compose.ci.yml exec -T app php -r "file_exists('.env') || copy('.env.example', '.env');"
           docker compose -f docker-compose.ci.yml exec -T app php artisan key:generate
-          docker compose -f docker-compose.ci.yml exec -T app php artisan config:clear
           docker compose -f docker-compose.ci.yml exec -T app php artisan migrate --force --seed
           docker compose -f docker-compose.ci.yml exec -T app ./vendor/bin/phpunit
