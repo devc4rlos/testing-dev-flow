@@ -23,7 +23,6 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - ./storage:/var/www/storage
       - ./public:/var/www/public
     env_file:
       - ./.env
