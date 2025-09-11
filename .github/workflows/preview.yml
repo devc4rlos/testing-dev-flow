@@ -51,7 +51,7 @@ jobs:
             export SERVICE_NAME="pr-${PR_NUMBER}"
             export IMAGE_TAG
 
-            if [ -d "$PROJECT_DIR" ]; then
+            if [ -d "$PROJECT_DIR/.git" ]; then
               cd ${PROJECT_DIR}
               git pull
             else
