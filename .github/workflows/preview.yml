@@ -63,20 +63,18 @@ jobs:
             fi
             git checkout ${{ github.event.pull_request.head.sha }}
 
-            cp .env.example .env
-            sed -i "s/^DB_CONNECTION=.*/DB_CONNECTION=mysql/" .env
-            sed -i "s/^# DB_HOST=.*/DB_HOST=db/" .env
-            sed -i "s/^# DB_PORT=.*/DB_PORT=3306/" .env
-            sed -i "s/^# DB_DATABASE=.*/DB_DATABASE=laravel_pr_${PR_NUMBER}/" .env
-            sed -i "s/^# DB_USERNAME=.*/DB_USERNAME=root/" .env
-            sed -i "s/^# DB_PASSWORD=.*/DB_PASSWORD=secret_pr_${PR_NUMBER}/" .env
-
-            echo "MYSQL_ROOT_PASSWORD=root_secret_pr_${PR_NUMBER}" >> .env
-            echo "MYSQL_PASSWORD=secret_pr_${PR_NUMBER}" >> .env
-
-            docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} exec app php artisan key:generate
+            if [ ! -f .env ]; then
+              echo "Arquivo .env não encontrado. Criando a partir de .env.example..."
+              cp .env.example .env
+            fi
 
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
+
+            sleep 5
+
+            docker compose -p pr-${PR_NUMBER} exec -T app php artisan key:generate
+
+            docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
 
       - name: Post Preview URL to PR
         uses: marocchino/sticky-pull-request-comment@v2
