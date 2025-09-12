@@ -74,7 +74,7 @@ jobs:
             echo "MYSQL_ROOT_PASSWORD=root_secret_pr_${PR_NUMBER}" >> .env
             echo "MYSQL_PASSWORD=secret_pr_${PR_NUMBER}" >> .env
 
-            docker compose -f docker-compose.preview.yml --env-file .env exec app php artisan key:generate
+            docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} exec app php artisan key:generate
 
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
 
