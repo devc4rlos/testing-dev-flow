@@ -63,17 +63,12 @@ jobs:
             fi
             git checkout ${{ github.event.pull_request.head.sha }}
 
-            if [ ! -f .env ]; then
-              echo "Arquivo .env não encontrado. Criando a partir de .env.example..."
-              cp .env.example .env
-            fi
-
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
 
             sleep 5
 
-            docker compose -p pr-${PR_NUMBER} exec -T app php artisan key:generate
-
+            docker compose -p pr-${PR_NUMBER} exec -T app cp .env.example .env
+            docker compose -p pr-${PR_NUMBER} exec -T app php artisan key:generate --force
             docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
 
       - name: Post Preview URL to PR
