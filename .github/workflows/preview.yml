@@ -57,7 +57,7 @@ jobs:
               cd ${PROJECT_DIR}
               git pull
 
-              docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} down -v
+              docker compose -p pr-${PR_NUMBER} down -v
             else
               mkdir -p ${PROJECT_DIR}
               cd ${PROJECT_DIR}
