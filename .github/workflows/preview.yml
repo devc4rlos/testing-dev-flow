@@ -65,6 +65,8 @@ jobs:
             fi
             git checkout ${{ github.event.pull_request.head.sha }}
 
+            cp .env.example .env
+
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
 
             sleep 5
