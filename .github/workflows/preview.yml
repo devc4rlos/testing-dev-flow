@@ -71,7 +71,7 @@ jobs:
 
             sleep 5
 
-            docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
+            docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
 
       - name: Post Preview URL to PR
         uses: marocchino/sticky-pull-request-comment@v2
