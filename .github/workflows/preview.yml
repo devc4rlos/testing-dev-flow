@@ -71,7 +71,6 @@ jobs:
 
             sleep 5
 
-            docker compose -p pr-${PR_NUMBER} exec -T app php artisan key:generate --force
             docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
 
       - name: Post Preview URL to PR
