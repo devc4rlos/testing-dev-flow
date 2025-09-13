@@ -65,13 +65,12 @@ jobs:
             fi
             git checkout ${{ github.event.pull_request.head.sha }}
 
-            cp .env.example .env
+            cp ~/.env .env
 
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
 
             sleep 5
 
-            docker compose -p pr-${PR_NUMBER} exec -T app cp .env.example .env
             docker compose -p pr-${PR_NUMBER} exec -T app php artisan key:generate --force
             docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
 
