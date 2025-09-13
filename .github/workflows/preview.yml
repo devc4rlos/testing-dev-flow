@@ -46,7 +46,7 @@ jobs:
           script: |
             PR_NUMBER=${{ github.event.pull_request.number }}
             IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
-            PROJECT_DIR="/home/deployer/previews/pr-${PR_NUMBER}"
+            PROJECT_DIR="/var/www/previews-prs/pr-${PR_NUMBER}"
 
             export HOSTNAME="pr-${PR_NUMBER}.preview.carlosalexandre.com.br"
             export ROUTER_NAME="pr-${PR_NUMBER}"
@@ -95,7 +95,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             PR_NUMBER=${{ github.event.pull_request.number }}
-            PROJECT_DIR="/home/deployer/previews/pr-${PR_NUMBER}"
+            PROJECT_DIR="/var/www/previews-prs/pr-${PR_NUMBER}"
 
             cd ${PROJECT_DIR}
             docker compose -p pr-${PR_NUMBER} down -v
