@@ -55,8 +55,8 @@ jobs:
             export IMAGE_TAG
 
             if [ ! -d "$PROJECT_DIR/.git" ]; then
+              git clone git@github.com:${{ github.repository }}.git ${PROJECT_DIR}
               cd ${PROJECT_DIR}
-              git clone git@github.com:${{ github.repository }}.git .
             else
               cd ${PROJECT_DIR}
               docker compose -p pr-${PR_NUMBER} down -v
