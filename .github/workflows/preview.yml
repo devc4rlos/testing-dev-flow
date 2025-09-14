@@ -2,7 +2,11 @@ name: Ephemeral Preview Environment
 
 on:
   pull_request:
-    types: [opened, synchronize, closed]
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build_and_push:
@@ -69,8 +73,6 @@ jobs:
             git fetch origin
             git reset --hard ${{ github.event.pull_request.head.sha }}
             git checkout ${{ github.event.pull_request.head.sha }}
-
-
 
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
             docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
