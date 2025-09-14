@@ -44,6 +44,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            set -e
             PR_NUMBER=${{ github.event.pull_request.number }}
             IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
             PROJECT_DIR="/var/www/previews-prs/pr-${PR_NUMBER}"
@@ -53,23 +54,21 @@ jobs:
             export SERVICE_NAME="pr-${PR_NUMBER}"
             export IMAGE_TAG
 
-            if [ -d "$PROJECT_DIR/.git" ]; then
-              cd ${PROJECT_DIR}
-              git pull
-
-              docker compose -p pr-${PR_NUMBER} down -v
-            else
-              mkdir -p ${PROJECT_DIR}
+            if [ ! -d "$PROJECT_DIR/.git" ]; then
               cd ${PROJECT_DIR}
               git clone git@github.com:${{ github.repository }}.git .
+            else
+              cd ${PROJECT_DIR}
+              docker compose -p pr-${PR_NUMBER} down -v
             fi
+
+            git fetch origin
+            git reset --hard ${{ github.event.pull_request.head.sha }}
             git checkout ${{ github.event.pull_request.head.sha }}
 
             cp ~/.env .env
 
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
-
-            sleep 5
 
             docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
 
