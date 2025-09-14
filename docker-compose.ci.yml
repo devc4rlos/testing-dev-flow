@@ -2,7 +2,7 @@ services:
   app:
     image: meu-app/laravel:test
     volumes:
-      - ./.env.ci:/var/www/html/.env:ro
+      - ./.env.ci:/var/www/.env:ro
     depends_on:
       mysql:
         condition: service_healthy
