@@ -93,11 +93,17 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            set -e
+
             PR_NUMBER=${{ github.event.pull_request.number }}
             PROJECT_DIR="/var/www/previews-prs/pr-${PR_NUMBER}"
 
-            cd ${PROJECT_DIR}
-            docker compose -p pr-${PR_NUMBER} down -v
+            if [ -d "$PROJECT_DIR" ]; then
+              cd ${PROJECT_DIR}
+              docker compose -p pr-${PR_NUMBER} down -v
 
-            cd ..
-            rm -rf ${PROJECT_DIR}
+              cd ..
+              rm -rf ${PROJECT_DIR}
+            fi
+
+            docker image prune -a -f
