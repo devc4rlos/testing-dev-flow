@@ -21,6 +21,7 @@ jobs:
 
           sleep 5
 
+          $DOCKER_COMPOSE exec -T app cp .env.ci .env
           $DOCKER_COMPOSE exec -T app php artisan key:generate
           $DOCKER_COMPOSE exec -T app php artisan migrate --force --seed
           $DOCKER_COMPOSE exec -T app ./vendor/bin/phpunit
