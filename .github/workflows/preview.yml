@@ -64,7 +64,6 @@ jobs:
             export SERVICE_NAME="pr-${PR_NUMBER}"
             export IMAGE_TAG
 
-
             if [ ! -d "$PROJECT_DIR/.git" ]; then
               git clone git@github.com:${{ github.repository }}.git ${PROJECT_DIR}
               cd ${PROJECT_DIR}
@@ -78,6 +77,7 @@ jobs:
             git checkout ${{ github.event.pull_request.head.sha }}
 
             docker compose -f docker-compose.preview.yml -p pr-${PR_NUMBER} up -d
+            sleep 5
             docker compose -p pr-${PR_NUMBER} exec -T app php artisan migrate --force
 
       - name: Post Preview URL to PR
