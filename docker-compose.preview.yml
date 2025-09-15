@@ -57,7 +57,7 @@ services:
       retries: 5
 
 volumes:
-  app-public-data:
+  app-public-data-${PR_ID:-local}:
   db-data:
     driver: local
 
