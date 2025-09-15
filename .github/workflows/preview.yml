@@ -70,6 +70,7 @@ jobs:
               cd ${PROJECT_DIR}
               cp ~/.env .env
               cp ~/.htpasswd ./docker/nginx/.htpasswd
+              chmod 644 ./docker/nginx/.htpasswd
             else
               cd ${PROJECT_DIR}
               docker compose -p pr-${PR_NUMBER} down -v
