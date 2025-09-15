@@ -46,9 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    environment:
-      name: preview-deployment
-      url: https://pr-${{ github.event.pull_request.number }}.preview.carlosalexandre.com.br
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
