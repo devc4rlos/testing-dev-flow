@@ -74,6 +74,8 @@ jobs:
               docker compose -p pr-${PR_NUMBER} down -v
             fi
 
+            #close PR
+
             git fetch origin
             git checkout ${{ github.event.pull_request.head.sha }}
 
