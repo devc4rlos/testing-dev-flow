@@ -31,11 +31,6 @@ services:
       - ./.env
     networks:
       - default
-    healthcheck:
-      test: [ "CMD-SHELL", "cgi-fcgi -q -connect 127.0.0.1:9000 || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   mysql:
     image: mysql:8.0
