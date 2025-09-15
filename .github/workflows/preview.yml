@@ -60,6 +60,7 @@ jobs:
             PROJECT_DIR="/var/www/previews-prs/pr-${PR_NUMBER}"
             GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
 
+            export PR_ID=${{ github.event.number }}
             export HOSTNAME="pr-${PR_NUMBER}.preview.carlosalexandre.com.br"
             export ROUTER_NAME="pr-${PR_NUMBER}"
             export SERVICE_NAME="pr-${PR_NUMBER}"
