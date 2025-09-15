@@ -64,6 +64,7 @@ jobs:
             export SERVICE_NAME="pr-${PR_NUMBER}"
             export IMAGE_TAG
 
+
             if [ ! -d "$PROJECT_DIR/.git" ]; then
               git clone git@github.com:${{ github.repository }}.git ${PROJECT_DIR}
               cd ${PROJECT_DIR}
