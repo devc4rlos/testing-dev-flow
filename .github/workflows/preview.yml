@@ -69,6 +69,7 @@ jobs:
               git clone git@github.com:${{ github.repository }}.git ${PROJECT_DIR}
               cd ${PROJECT_DIR}
               cp ~/.env .env
+              cp ~/.htpasswd ./docker/nginx/auth/.htpasswd
             else
               cd ${PROJECT_DIR}
               docker compose -p pr-${PR_NUMBER} down -v
