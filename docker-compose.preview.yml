@@ -29,7 +29,7 @@ services:
     env_file:
       - ./.env
     networks:
-      - default
+      - proxy
 
   mysql:
     image: mysql:8.0
@@ -43,13 +43,13 @@ services:
       - ./.env
     volumes:
       - db-data:/var/lib/mysql
-    networks:
-      - default
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
       interval: 10s
       timeout: 10s
       retries: 5
+    networks:
+      - proxy
 
 volumes:
   app-public-data:
