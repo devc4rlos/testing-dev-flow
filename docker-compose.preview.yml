@@ -10,7 +10,6 @@ services:
       - app
     networks:
       - proxy
-      - default
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${ROUTER_NAME}.rule=Host(`${HOSTNAME}`)"
@@ -58,7 +57,5 @@ volumes:
     driver: local
 
 networks:
-  default:
-    driver: bridge
   proxy:
     external: true
