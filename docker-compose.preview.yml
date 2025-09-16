@@ -30,6 +30,11 @@ services:
       - ./.env
     networks:
       - proxy
+    healthcheck:
+      test: [ "CMD-SHELL", "fpm-healthcheck" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mysql:
     image: mysql:8.0
