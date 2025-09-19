@@ -36,6 +36,7 @@ RUN apk add --no-cache --update \
     libpng-dev \
     freetype-dev \
     libjpeg-turbo-dev \
+    libfcgi-bin \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath zip gd \
     && apk del $PHPIZE_DEPS
 
