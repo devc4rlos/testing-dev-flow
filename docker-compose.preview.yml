@@ -35,7 +35,7 @@ services:
     networks:
       - default
     healthcheck:
-      test: [ "CMD", "cgi-fcgi", "-bind", "-connect", "127.0.0.1:9000" ]
+      test: [ "CMD-SHELL", "fpm-healthcheck" ]
       interval: 10s
       timeout: 5s
       retries: 3
