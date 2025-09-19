@@ -35,10 +35,11 @@ services:
     networks:
       - default
     healthcheck:
-      test: [ "CMD-SHELL", "cgi-fcgi -q -connect 127.0.0.1:9000 || exit 1" ]
+      test: [ "CMD", "cgi-fcgi", "-bind", "-connect", "127.0.0.1:9000" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
+      start_period: 10s
 
   mysql:
     image: mysql:8.0
