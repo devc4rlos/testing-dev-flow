@@ -90,7 +90,7 @@ jobs:
           header: preview-url
           message: |
             ✅ **Preview pronto!** (Disponibilizado manualmente)
-            Acesse em: https://pr-${{ github.event.pull_request.number }}.preview.carlosalexandre.com.br
+            Acesse em: https://testing-dev-flow-pr-${{ github.event.pull_request.number }}.preview.carlosalexandre.com.br
 
             > Imagem: `devc4rlos/testing-dev-flow:${{ needs.build_and_push.outputs.image_tag }}`
 
