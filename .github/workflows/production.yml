@@ -2,7 +2,7 @@ name: Deploy Production Environment
 
 on:
   pull_request:
-    branches: [ main, feature/deploy-production  ]
+    branches: [ feature/deploy-production ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -38,8 +38,6 @@ jobs:
   deploy_preview:
     needs: build_and_push
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
@@ -49,7 +47,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            PR_NUMBER=${{ github.event.pull_request.number }}
             IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
             PROJECT_DIR="/var/www/testing-dev-flow"
             GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
