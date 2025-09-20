@@ -118,7 +118,6 @@ jobs:
             fi
             docker image prune -a -f
 
-
       - name: Set output slug
         id: vars
         run: echo "sha_short=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
@@ -128,3 +127,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Remove Image Tag
+        run: |
+          IMAGE_TAG=${{ steps.vars.outputs.sha_short }}
+          docker rmi devc4rlos/testing-dev-flow:${IMAGE_TAG} --force
