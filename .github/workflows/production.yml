@@ -2,7 +2,7 @@ name: Deploy Production Environment
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, feature/deploy-production ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -10,7 +10,6 @@ concurrency:
 
 jobs:
   build_and_push:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       image_tag: ${{ steps.vars.outputs.sha_short }}
@@ -38,7 +37,6 @@ jobs:
 
   deploy_preview:
     needs: build_and_push
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
