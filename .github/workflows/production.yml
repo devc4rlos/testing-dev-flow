@@ -41,6 +41,9 @@ jobs:
     if: github.event.pull_request.merged == true
     needs: build_and_push
     runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: https://testing-dev-flow.carlosalexandre.com.br/
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
