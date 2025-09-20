@@ -1,8 +1,9 @@
-name: Deploy Production Environment
+name: Deploy to Production
 
 on:
   pull_request:
-    branches: [ feature/deploy-production ]
+    types: [ closed ]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -10,6 +11,7 @@ concurrency:
 
 jobs:
   build_and_push:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       image_tag: ${{ steps.vars.outputs.sha_short }}
@@ -36,6 +38,7 @@ jobs:
           docker push devc4rlos/testing-dev-flow:${IMAGE_TAG}
 
   deploy_preview:
+    if: github.event.pull_request.merged == true
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
