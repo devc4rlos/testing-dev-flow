@@ -118,7 +118,8 @@ jobs:
             fi
             docker image prune -a -f
 
-      - name: Get image tag from PR SHA
+
+      - name: Set output slug
         id: vars
         run: echo "sha_short=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
@@ -127,11 +128,3 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Delete Docker Hub tag 🧹
-        uses: actions-hub/docker-delete-tags@v1
-        with:
-          user: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repo: devc4rlos/testing-dev-flow
-          tags: ${{ steps.vars.outputs.sha_short }}
