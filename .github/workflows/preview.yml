@@ -27,7 +27,6 @@ jobs:
     steps:
       - name: Get PR's Head SHA
         id: pr_info
-
         run: |
           # Usa a CLI do GitHub (gh) para buscar o SHA do último commit do PR
           HEAD_SHA=$(gh pr view ${{ github.event.issue.number }} --json headRefOid -q .headRefOid)
@@ -115,7 +114,9 @@ jobs:
           echo "Evento: ${{ github.event_name }}"
           echo "É um PR? ${{ !!github.event.issue.pull_request }}"
           echo "Corpo do Comentário: '${{ github.event.comment.body }}'"
-          echo "Associação do Autor: ${{ github.author_association }}"
+          echo "Verificação autor: ${{ github.actor == github.repository_owner }}"
+          echo "Associação do Autor: ${{ github.actor }}"
+          echo "Dono do repositório: ${{ github.repository_owner }}"
 
   destroy_preview:
     name: Destroy Preview Environment
