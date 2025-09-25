@@ -1,21 +1,24 @@
-name: Ephemeral Preview Environment
+name: Ephemeral Preview Environment (On Approve)
 
 on:
   pull_request:
-    types: [labeled, closed, synchronize]
+    types: [closed]
+
+  pull_request_review:
+    types: [submitted]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  build_and_push:
-    if: |
-      (github.event.action == 'labeled' && github.event.label.name == 'deploy-preview') ||
-      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'deploy-preview'))
+  build_and_deploy_preview:
+    name: Build and Deploy Preview
+    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
     runs-on: ubuntu-latest
-    outputs:
-      image_tag: ${{ steps.vars.outputs.sha_short }}
+    permissions:
+      pull-requests: write
+
     steps:
       - name: Checkout repository at the correct SHA
         uses: actions/checkout@v4
@@ -38,15 +41,6 @@ jobs:
           docker build --target php -t devc4rlos/testing-dev-flow:${IMAGE_TAG} .
           docker push devc4rlos/testing-dev-flow:${IMAGE_TAG}
 
-  deploy_preview:
-    needs: build_and_push
-    if: |
-      (github.event.action == 'labeled' && github.event.label.name == 'deploy-preview') ||
-      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'deploy-preview'))
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
@@ -56,7 +50,7 @@ jobs:
           script: |
             set -e
             PR_NUMBER=${{ github.event.pull_request.number }}
-            IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
+            IMAGE_TAG=${{ steps.vars.outputs.sha_short }}
             PROJECT_DIR="/var/www/previews-prs/testing-dev-flow/pr-${PR_NUMBER}"
             GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
 
@@ -89,13 +83,14 @@ jobs:
           number: ${{ github.event.pull_request.number }}
           header: preview-url
           message: |
-            ✅ **Preview pronto!** (Disponibilizado manualmente)
+            ✅ **Preview pronto!** (Disponibilizado após aprovação da revisão)
             Acesse em: https://testing-dev-flow-pr-${{ github.event.pull_request.number }}.preview.carlosalexandre.com.br
 
-            > Imagem: `devc4rlos/testing-dev-flow:${{ needs.build_and_push.outputs.image_tag }}`
+            > Imagem: `devc4rlos/testing-dev-flow:${{ steps.vars.outputs.sha_short }}`
 
   destroy_preview:
-    if: github.event.action == 'closed'
+    name: Destroy Preview Environment
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     steps:
       - name: Destroy Environment on VPS
