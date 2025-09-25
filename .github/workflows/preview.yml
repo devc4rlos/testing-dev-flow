@@ -27,6 +27,7 @@ jobs:
     steps:
       - name: Get PR's Head SHA
         id: pr_info
+
         run: |
           # Usa a CLI do GitHub (gh) para buscar o SHA do último commit do PR
           HEAD_SHA=$(gh pr view ${{ github.event.issue.number }} --json headRefOid -q .headRefOid)
