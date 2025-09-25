@@ -118,28 +118,17 @@ jobs:
             fi
             docker image prune -a -f
 
-      - name: Set short SHA
+      - name: Set output slug
         id: vars
-        run: echo "sha_short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        run: echo "sha_short=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
       - name: Install regctl
         run: |
-          curl -sSL https://github.com/regclient/regclient/releases/latest/download/regctl-linux-amd64 > /usr/local/bin/regctl
+          curl -L https://github.com/regclient/regclient/releases/latest/download/regctl-linux-amd64 -o /usr/local/bin/regctl
           chmod +x /usr/local/bin/regctl
 
-      - name: Login to DockerHub
+      - name: Delete Image Tag from Docker Hub
         run: |
-          regctl registry login docker.io \
-            -u "${{ secrets.DOCKERHUB_USERNAME }}" \
-            -p "${{ secrets.DOCKERHUB_TOKEN }}"
-
-      - name: Delete image by digest
-        run: |
-          IMAGE=devc4rlos/testing-dev-flow
-          TAG=${{ steps.vars.outputs.sha_short }}
-
-          echo "Getting digest for ${IMAGE}:${TAG}..."
-          DIGEST=$(regctl manifest digest docker.io/${IMAGE}:${TAG})
-
-          echo "Removing manifest ${DIGEST}..."
-          regctl manifest rm docker.io/${IMAGE}@${DIGEST}
+          IMAGE_TAG=${{ steps.vars.outputs.sha_short }}
+          regctl registry login docker.io -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+          regctl tag rm docker.io/devc4rlos/testing-dev-flow:${IMAGE_TAG}
