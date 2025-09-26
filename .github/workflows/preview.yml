@@ -36,56 +36,45 @@ jobs:
           docker build --target php -t devc4rlos/testing-dev-flow:${IMAGE_TAG} .
           docker push devc4rlos/testing-dev-flow:${IMAGE_TAG}
 
-  deploy-preview:
+  deploy_preview:
     needs: build_and_push
     runs-on: ubuntu-latest
+    if: |
+      github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      pull-requests: write
     steps:
-      - name: Checkout PR
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Configurar variáveis
-        run: |
-          echo "" >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-
-      - name: Deploy no servidor via SSH
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            export PR_NUMBER=${{ github.event.pull_request.number }}
-            export PR_SHA=${{ github.event.pull_request.head.sha }}
-            export IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
-            export PROJECT_DIR="/var/www/previews-prs/testing-dev-flow/pr-${PR_NUMBER}"
-            export PR_REPO=${{ github.event.pull_request.head.repo.full_name }}
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
+            PROJECT_DIR="/var/www/previews-prs/testing-dev-flow/pr-${PR_NUMBER}"
 
             export HOSTNAME="testing-dev-flow-pr-${PR_NUMBER}.preview.carlosalexandre.com.br"
             export ROUTER_NAME="testing-dev-flow-pr-${PR_NUMBER}"
             export SERVICE_NAME="testing-dev-flow-pr-${PR_NUMBER}"
             export IMAGE_TAG
 
-            mkdir -p ${PROJECT_DIR}
-            if [ -d "${PROJECT_DIR}/.git" ]; then
+            if [ ! -d "$PROJECT_DIR/.git" ]; then
+              git clone git@github.com:${{ github.repository }}.git ${PROJECT_DIR}
               cd ${PROJECT_DIR}
-              docker compose -p ${SERVICE_NAME} down -v
-              git fetch origin
-              git checkout ${PR_SHA}
-            else
-              rm -rf ${PROJECT_DIR}
-              git clone https://github.com/${PR_REPO}.git ${PROJECT_DIR}
-              cd ${PROJECT_DIR}
-              git checkout ${PR_SHA}
+
               ln -s ~/.env ./.env
               ln -s ~/.htpasswd ./docker/nginx/.htpasswd
+            else
+              cd ${PROJECT_DIR}
+              docker compose -p ${SERVICE_NAME} down -v
             fi
+
+            git fetch origin
+            git checkout ${{ github.event.pull_request.head.sha }}
 
             docker compose -f docker-compose.preview.yml -p ${SERVICE_NAME} up -d
             sleep 5
