@@ -49,9 +49,9 @@ jobs:
 
       - name: Configurar variáveis
         run: |
-          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
-          echo "PR_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
-          echo "PR_REPO=${{ github.event.pull_request.head.repo.full_name }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
 
       - name: Deploy no servidor via SSH
         uses: appleboy/ssh-action@master
@@ -61,8 +61,11 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -e
-            IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
-            PROJECT_DIR="/var/www/previews-prs/testing-dev-flow/pr-${PR_NUMBER}"
+            export PR_NUMBER=${{ github.event.pull_request.number }}
+            export PR_SHA=${{ github.event.pull_request.head.sha }}
+            export IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
+            export PROJECT_DIR="/var/www/previews-prs/testing-dev-flow/pr-${PR_NUMBER}"
+            export PR_REPO=${{ github.event.pull_request.head.repo.full_name }}
 
             export HOSTNAME="testing-dev-flow-pr-${PR_NUMBER}.preview.carlosalexandre.com.br"
             export ROUTER_NAME="testing-dev-flow-pr-${PR_NUMBER}"
